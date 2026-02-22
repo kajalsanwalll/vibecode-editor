@@ -10,7 +10,7 @@ export const protectedRoutes: string[]= [
     "/",
 ]
 
-export const authRoles: string[] = [
+export const authRoutes: string[] = [
     "/auth/sign-in",
 ]
 
