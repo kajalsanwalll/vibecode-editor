@@ -5,7 +5,7 @@ import authConfig from "./auth.config";
 
 export const {handlers, signIn, signOut, auth} = NextAuth({
     callbacks: {
-        async signIn(user, account){
+        async signIn({user , account}){
             if(!user || !account){
                 return false;
             }
@@ -62,11 +62,17 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                             providerAccountId: account.providerAccountId,
                             refresh_token: account.refresh_token,
                             access_token: account.access_token,
-                            
+                            expires_at: account.expires_at,
+                            token_type: account.token_type,
+                            scope: account.scope,
+                            id_token: account.id_token,
+                            session_state: account.session_state
                         }
                     })
                 }
             }
+
+            return true;
         },
         async jwt(){
 
