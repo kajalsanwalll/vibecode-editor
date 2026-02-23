@@ -18,7 +18,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                 const newUser = await db.user.create({
                     data: {
                         email: user.email!,
-                        name:user.name,
+                        name: user.name || "User",
                         image: user.image,
 
                         accounts:{
@@ -32,7 +32,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                                 token_type: account.token_type,
                                 scope:account.scope,
                                 id_token: account.id_token,
-                                session_state: account.session_state    
+                                session_state: account.session_state ? String(account.session_state) : null
 
                             }
                         }
@@ -66,7 +66,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                             token_type: account.token_type,
                             scope: account.scope,
                             id_token: account.id_token,
-                            session_state: account.session_state
+                            session_state: account.session_state ? String(account.session_state) : null
                         }
                     })
                 }
