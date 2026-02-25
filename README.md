@@ -7,4 +7,6 @@ Next.js.
 MongoDB.    
 Prisma ORM.    
 Tailwind CSS.    
-Shadcn/ui.     
+Shadcn/ui.    
+
+Work in progress!
