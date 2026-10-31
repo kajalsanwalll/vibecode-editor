@@ -41,11 +41,69 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import RenameFolderDialog from "./dialogs/rename-folder-dialog";
 import NewFolderDialog from "./dialogs/new-folder-dialog";
 import NewFileDialog from "./dialogs/new-file-dialog";
 import RenameFileDialog from "./dialogs/rename-file-dialog";
 import { DeleteDialog } from "./dialogs/delete-dialog";
+
+interface RenameFolderDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onRename: (folderName: string) => void;
+  currentFolderName: string;
+}
+
+function RenameFolderDialog({
+  isOpen,
+  onClose,
+  onRename,
+  currentFolderName,
+}: RenameFolderDialogProps) {
+  const [folderName, setFolderName] = React.useState(currentFolderName);
+
+  React.useEffect(() => {
+    if (isOpen) setFolderName(currentFolderName);
+  }, [isOpen, currentFolderName]);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedName = folderName.trim();
+    if (trimmedName) onRename(trimmedName);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <form
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rename-folder-title"
+        onSubmit={handleSubmit}
+        className="w-full max-w-sm space-y-4 rounded-lg bg-background p-6 shadow-lg"
+      >
+        <h2 id="rename-folder-title" className="text-lg font-semibold">
+          Rename Folder
+        </h2>
+        <input
+          autoFocus
+          aria-label="Folder name"
+          value={folderName}
+          onChange={(event) => setFolderName(event.target.value)}
+          className="w-full rounded-md border bg-background px-3 py-2"
+        />
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={!folderName.trim()}>
+            Rename
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+}
 
 interface TemplateFile {
   filename: string;
