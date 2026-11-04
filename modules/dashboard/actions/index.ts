@@ -77,6 +77,10 @@ export const createPlayground = async (data: {
 }) => {
   const user = await currentUser();
 
+   if (!user?.id) {
+    throw new Error("You must be logged in to create a playground");
+  }
+
   const { template, title, description } = data;
 
   try {
@@ -91,7 +95,8 @@ export const createPlayground = async (data: {
 
     return playground;
   } catch (error) {
-    console.log(error);
+    console.error("Create playground error:", error);
+    throw error;
   }
 };
 
