@@ -7,7 +7,6 @@ import { Progress } from "@/components/ui/progress";
 
 import { WebContainer } from "@webcontainer/api";
 import { TemplateFolder } from "@/modules/playground/lib/path-to-json";
-import TerminalComponent from "./terminal";
 
 interface WebContainerPreviewProps {
   templateData: TemplateFolder;
@@ -35,6 +34,8 @@ const WebContainerPreview = ({
     starting: false,
     ready: false,
   });
+  const [TerminalComponent, setTerminalComponent] =
+  useState<React.ForwardRefExoticComponent<any> | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const totalSteps = 4;
   const [setupError, setSetupError] = useState<string | null>(null);
@@ -242,6 +243,24 @@ const WebContainerPreview = ({
   }, [instance, templateData, isSetupComplete, isSetupInProgress]);
 
   useEffect(() => {
+  let mounted = true;
+
+  import("./terminal")
+    .then(({ default: Terminal }) => {
+      if (mounted) {
+        setTerminalComponent(() => Terminal);
+      }
+    })
+    .catch((error) => {
+      console.error("Failed to load terminal:", error);
+    });
+
+  return () => {
+    mounted = false;
+  };
+}, []);
+
+  useEffect(() => {
     return () => {};
   }, []);
 
@@ -333,12 +352,18 @@ const WebContainerPreview = ({
 
           {/* Terminal */}
           <div className="flex-1 p-4">
-            <TerminalComponent
-              ref={terminalRef}
-              webContainerInstance={instance}
-              theme="dark"
-              className="h-full"
-            />
+            {TerminalComponent ? (
+  <TerminalComponent
+    ref={terminalRef}
+    webContainerInstance={instance}
+    theme="dark"
+    className="h-full"
+  />
+) : (
+  <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+    Loading terminal...
+  </div>
+)}
           </div>
         </div>
       ) : (
@@ -352,12 +377,18 @@ const WebContainerPreview = ({
           </div>
 
           <div className="h-64 border-t">
-            <TerminalComponent
-              ref={terminalRef}
-              webContainerInstance={instance}
-              theme="dark"
-              className="h-full"
-            />
+            {TerminalComponent ? (
+  <TerminalComponent
+    ref={terminalRef}
+    webContainerInstance={instance}
+    theme="dark"
+    className="h-full"
+  />
+) : (
+  <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+    Loading terminal...
+  </div>
+)}
           </div>
         </div>
       )}
