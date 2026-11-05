@@ -333,7 +333,7 @@ export default function Home() {
           <p>Built for developers who love to create. © 2026 VibeCode.</p>
 
           <a
-            href="https://github.com/Aestheticsuraj234/chai-vibe-editor"
+            href="https://github.com/kajalsanwalll/vibecode-editor"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 transition hover:text-red-500"

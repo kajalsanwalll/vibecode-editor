@@ -2,8 +2,6 @@
 
 A browser-based IDE with an AI coding assistant and in-browser code execution. Built with Next.js, Monaco Editor, WebContainers, and local LLMs through Ollama.
 
-![VibeCode Editor](https://github.com/Aestheticsuraj234/chai-vibe-editor/raw/master/public/vibe-code-editor-thumbnaail.svg)
-
 ## Features
 
 - **Authentication**: Google and GitHub sign-in with NextAuth
