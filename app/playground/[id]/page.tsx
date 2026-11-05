@@ -37,6 +37,7 @@ import WebContainerPreview from "@/modules/webcontainers/components/webcontainer
 import { useWebContainer } from "@/modules/webcontainers/hooks/useWebContainer";
 import {
   AlertCircle,
+  ArrowLeft,
   Bot,
   FileText,
   FolderOpen,
@@ -44,7 +45,7 @@ import {
   Settings,
   X,
 } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, {
   useCallback,
   useEffect,
@@ -56,6 +57,7 @@ import { toast } from "sonner";
 
 const MainPlaygroundPage = () => {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [isPreviewVisible, setIsPreviewVisible] = useState(true);
 
   const { playgroundData, templateData, isLoading, error, saveTemplateData } =
@@ -174,6 +176,17 @@ const MainPlaygroundPage = () => {
 
   const handleFileSelect = (file: TemplateFile) => {
     openFile(file);
+  };
+
+  // Go back to the dashboard, warning first if there are unsaved changes
+  const handleBack = () => {
+    if (
+      hasUnsavedChanges &&
+      !window.confirm("You have unsaved changes. Leave anyway?")
+    ) {
+      return;
+    }
+    router.push("/dashboard");
   };
 
   const handleSave = useCallback(
@@ -301,9 +314,15 @@ const MainPlaygroundPage = () => {
           Something went wrong
         </h2>
         <p className="text-gray-600 mb-4">{error}</p>
-        <Button onClick={() => window.location.reload()} variant="destructive">
-          Try Again
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button onClick={() => router.push("/dashboard")} variant="outline">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to dashboard
+          </Button>
+          <Button onClick={() => window.location.reload()} variant="destructive">
+            Try Again
+          </Button>
+        </div>
       </div>
     );
   }
@@ -342,9 +361,15 @@ const MainPlaygroundPage = () => {
         <h2 className="text-xl font-semibold text-amber-600 mb-2">
           No template data available
         </h2>
-        <Button onClick={() => window.location.reload()} variant="outline">
-          Reload Template
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button onClick={() => router.push("/dashboard")} variant="outline">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to dashboard
+          </Button>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            Reload Template
+          </Button>
+        </div>
       </div>
     );
   }
@@ -366,6 +391,22 @@ const MainPlaygroundPage = () => {
         />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleBack}
+                  aria-label="Back to dashboard"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Back to dashboard</TooltipContent>
+            </Tooltip>
+
+            <Separator orientation="vertical" className="mx-1 h-4" />
+
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
 
