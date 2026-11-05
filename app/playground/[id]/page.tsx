@@ -214,20 +214,27 @@ const MainPlaygroundPage = () => {
           JSON.stringify(latestTemplateData)
         );
 
-        // @ts-ignore
-          const updateFileContent = (items: any[]) =>
-            // @ts-ignore
-          items.map((item) => {
-            if ("folderName" in item) {
-              return { ...item, items: updateFileContent(item.items) };
-            } else if (
-              item.filename === fileToSave.filename &&
-              item.fileExtension === fileToSave.fileExtension
-            ) {
-              return { ...item, content: fileToSave.content };
-            }
-            return item;
-          });
+        const updateFileContent = (items: TemplateItem[]): TemplateItem[] =>
+  items.map((item) => {
+    if ("folderName" in item) {
+      return {
+        ...item,
+        items: updateFileContent(item.items),
+      };
+    }
+
+    if (
+      item.filename === fileToSave.filename &&
+      item.fileExtension === fileToSave.fileExtension
+    ) {
+      return {
+        ...item,
+        content: fileToSave.content,
+      };
+    }
+
+    return item;
+  });
         updatedTemplateData.items = updateFileContent(
           updatedTemplateData.items
         );
@@ -241,8 +248,8 @@ const MainPlaygroundPage = () => {
           }
         }
 
-           const newTemplateData = await saveTemplateData(updatedTemplateData);
-        setTemplateData(newTemplateData || updatedTemplateData);
+           await saveTemplateData(updatedTemplateData);
+           setTemplateData(updatedTemplateData);
 // Update open files
         const updatedOpenFiles = openFiles.map((f) =>
           f.id === targetFileId

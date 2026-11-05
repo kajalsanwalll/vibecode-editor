@@ -218,7 +218,7 @@ export default function Home() {
                     <span className="text-pink-400">import</span>
                     <span className="text-gray-300"> React </span>
                     <span className="text-pink-400">from</span>
-                    <span className="text-green-300"> "react"</span>
+                    <span className="text-green-300"> &quot;react&quot;</span>
                   </p>
 
                   <p>
@@ -236,7 +236,7 @@ export default function Home() {
                     <span className="text-gray-300">{"<"}main </span>
                     <span className="text-sky-300">className</span>
                     <span className="text-gray-300">=</span>
-                    <span className="text-green-300">"min-h-screen"</span>
+                    <span className="text-green-300">&quot;min-h-screen&quot;</span>
                     <span className="text-gray-300">{">"}</span>
                   </p>
 
