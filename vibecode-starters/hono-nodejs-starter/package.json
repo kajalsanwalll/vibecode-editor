@@ -1,0 +1,19 @@
+{
+  "name": "hono-nodejs-starter",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild --bundle --outfile=./dist/index.js --platform=node --target=node20 ./src/index.ts",
+    "zip": "zip -j lambda.zip dist/index.js",
+    "update": "aws lambda update-function-code --zip-file fileb://lambda.zip --function-name hello",
+    "deploy": "run-s build zip update"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "esbuild": "^0.28.1",
+    "npm-run-all2": "^9.0.2"
+  },
+  "dependencies": {
+    "@hono/aws-lambda": "^1.0.0",
+    "hono": "^4.13.16"
+  }
+}

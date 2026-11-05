@@ -111,10 +111,6 @@ A browser-based IDE with an AI coding assistant and in-browser code execution. B
 - **Prisma client errors**: run `npx prisma generate` after installing or changing the schema.
 - **No AI suggestions**: confirm Ollama is running and the model is pulled.
 
-## License
-
-Released under the [MIT License](LICENSE).
-
 ## Acknowledgements
 
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/)
