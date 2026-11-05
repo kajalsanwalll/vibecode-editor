@@ -15,6 +15,21 @@ interface UseWebContaierReturn {
   destory: () => void;
 }
 
+// WebContainer.boot() may only be called once per page. Keeping the promise
+// outside React means Strict Mode's double effect run and re-mounts all
+// share the same instance instead of booting a second one.
+let bootPromise: Promise<WebContainer> | null = null;
+
+function getWebContainer(): Promise<WebContainer> {
+  if (!bootPromise) {
+    bootPromise = WebContainer.boot().catch((err) => {
+      bootPromise = null; // allow a retry if boot failed
+      throw err;
+    });
+  }
+  return bootPromise;
+}
+
 export const useWebContainer = ({
   templateData,
 }: UseWebContainerProps): UseWebContaierReturn => {
@@ -28,7 +43,7 @@ export const useWebContainer = ({
 
     async function initializeWebContainer() {
       try {
-        const webcontainerInstance = await WebContainer.boot();
+        const webcontainerInstance = await getWebContainer();
 
         if (!mounted) return;
 
@@ -49,11 +64,10 @@ export const useWebContainer = ({
 
     initializeWebContainer();
 
+    // No teardown here: in dev, Strict Mode runs this cleanup right after the
+    // first mount, which would kill the shared instance. Use destory() instead.
     return () => {
       mounted = false;
-      if (instance) {
-        instance.teardown();
-      }
     };
   }, []);
 
@@ -82,13 +96,14 @@ export const useWebContainer = ({
     [instance]
   );
 
-  const destory = useCallback(()=>{
-    if(instance){
-        instance.teardown()
-        setInstance(null);
-        setServerUrl(null)
+  const destory = useCallback(() => {
+    if (instance) {
+      instance.teardown();
+      bootPromise = null; // a fresh boot is allowed after teardown
+      setInstance(null);
+      setServerUrl(null);
     }
-  },[instance])
+  }, [instance]);
 
-  return {serverUrl , isLoading , error , instance , writeFileSync , destory}
+  return { serverUrl, isLoading, error, instance, writeFileSync, destory };
 };
