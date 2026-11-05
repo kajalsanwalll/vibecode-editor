@@ -382,17 +382,19 @@ const MainPlaygroundPage = () => {
 
               <div className="flex items-center gap-1">
                 <Tooltip>
-                  <TooltipTrigger>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleSave()}
-                      disabled={!activeFile || !activeFile.hasUnsavedChanges}
-                    >
-                      <Save className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Save (Ctrl+S)</TooltipContent>
+                 <TooltipTrigger asChild>
+                 <span className="inline-flex" tabIndex={0}>
+                 <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleSave()}
+                  disabled={!activeFile || !activeFile.hasUnsavedChanges}
+                  >
+                 <Save className="h-4 w-4" />
+                 </Button>
+                 </span>
+                 </TooltipTrigger>
+                 <TooltipContent>Save (Ctrl+S)</TooltipContent>
                 </Tooltip>
 
                 <Tooltip>
