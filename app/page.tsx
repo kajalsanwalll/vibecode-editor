@@ -11,6 +11,7 @@ import {
   Terminal,
   Zap,
 } from "lucide-react";
+import LogoutButton from "@/components/logout-button";
 
 import { Button } from "@/components/ui/button";
 
@@ -70,15 +71,19 @@ export default function Home() {
             </Link>
           </div>
 
-          <Button
-            asChild
-            className="bg-red-500 text-white shadow-sm hover:bg-red-600"
-          >
-            <Link href="/dashboard">
-              Dashboard
-              <ArrowRight size={16} className="ml-2" />
-            </Link>
-          </Button>
+          <div className="flex items-center gap-3">
+  <Button
+    asChild
+    className="bg-red-500 text-white shadow-sm hover:bg-red-600"
+  >
+    <Link href="/dashboard">
+      Dashboard
+      <ArrowRight size={16} className="ml-2" />
+    </Link>
+  </Button>
+
+  <LogoutButton />
+</div>
 
         </div>
       </nav>
