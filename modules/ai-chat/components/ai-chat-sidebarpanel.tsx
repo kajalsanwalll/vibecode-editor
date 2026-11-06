@@ -45,7 +45,6 @@ import {
     DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 
-// @ts-expect-error KaTeX CSS is bundled by Next.js; it has no TypeScript declarations.
 import "katex/dist/katex.min.css";
 import Image from "next/image";
 
