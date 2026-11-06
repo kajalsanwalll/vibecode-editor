@@ -32,6 +32,7 @@ import { findFilePath } from "@/modules/playground/lib";
 import {
   TemplateFile,
   TemplateFolder,
+  TemplateItem,
 } from "@/modules/playground/lib/path-to-json";
 import WebContainerPreview from "@/modules/webcontainers/components/webcontainer-preview";
 import { useWebContainer } from "@/modules/webcontainers/hooks/useWebContainer";
@@ -91,7 +92,7 @@ const MainPlaygroundPage = () => {
     error: containerError,
     instance,
     writeFileSync,
-  } = useWebContainer({ templateData });
+  } = useWebContainer({ templateData: templateData! }); 
 
   const lastSyncedContent = useRef<Map<string, string>>(new Map());
 
@@ -189,100 +190,103 @@ const MainPlaygroundPage = () => {
   };
 
   const handleSave = useCallback(
-    async (fileId?: string) => {
-      const targetFileId = fileId || activeFileId;
-      if (!targetFileId) return;
+  async (fileId?: string) => {
+    const targetFileId = fileId || activeFileId;
+    if (!targetFileId) return;
 
-      const fileToSave = openFiles.find((f) => f.id === targetFileId);
+    const fileToSave = openFiles.find((f) => f.id === targetFileId);
+    if (!fileToSave) return;
 
-      if (!fileToSave) return;
+    const latestTemplateData = useFileExplorer.getState().templateData;
+    if (!latestTemplateData) return;
 
-      const latestTemplateData = useFileExplorer.getState().templateData;
-      if (!latestTemplateData) return
+    try {
+      const filePath = findFilePath(fileToSave, latestTemplateData);
 
-      try {
-            const filePath = findFilePath(fileToSave, latestTemplateData);
-        if (!filePath) {
-          toast.error(
-            `Could not find path for file: ${fileToSave.filename}.${fileToSave.fileExtension}`
-          );
-          return;
-        }
-
-   const updatedTemplateData = JSON.parse(
-          JSON.stringify(latestTemplateData)
-        );
-
-        const updateFileContent = (items: TemplateItem[]): TemplateItem[] =>
-  items.map((item) => {
-    if ("folderName" in item) {
-      return {
-        ...item,
-        items: updateFileContent(item.items),
-      };
-    }
-
-    if (
-      item.filename === fileToSave.filename &&
-      item.fileExtension === fileToSave.fileExtension
-    ) {
-      return {
-        ...item,
-        content: fileToSave.content,
-      };
-    }
-
-    return item;
-  });
-        updatedTemplateData.items = updateFileContent(
-          updatedTemplateData.items
-        );
-
-          // Sync with WebContainer
-        if (writeFileSync) {
-          await writeFileSync(filePath, fileToSave.content);
-          lastSyncedContent.current.set(fileToSave.id, fileToSave.content);
-          if (instance && instance.fs) {
-            await instance.fs.writeFile(filePath, fileToSave.content);
-          }
-        }
-
-           await saveTemplateData(updatedTemplateData);
-           setTemplateData(updatedTemplateData);
-// Update open files
-        const updatedOpenFiles = openFiles.map((f) =>
-          f.id === targetFileId
-            ? {
-                ...f,
-                content: fileToSave.content,
-                originalContent: fileToSave.content,
-                hasUnsavedChanges: false,
-              }
-            : f
-        );
-        setOpenFiles(updatedOpenFiles);
-
-    toast.success(
-          `Saved ${fileToSave.filename}.${fileToSave.fileExtension}`
-        );
-      } catch (error) {
-         console.error("Error saving file:", error);
+      if (!filePath) {
         toast.error(
-          `Failed to save ${fileToSave.filename}.${fileToSave.fileExtension}`
+          `Could not find path for file: ${fileToSave.filename}.${fileToSave.fileExtension}`
         );
-        throw error;
+        return;
       }
-    },
-    [
-      activeFileId,
-      openFiles,
-      writeFileSync,
-      instance,
-      saveTemplateData,
-      setTemplateData,
-      setOpenFiles,
-    ]
-  );
+
+      const updatedTemplateData = JSON.parse(
+        JSON.stringify(latestTemplateData)
+      );
+
+      const updateFileContent = (items: TemplateItem[]): TemplateItem[] =>
+        items.map((item) => {
+          if ("folderName" in item) {
+            return {
+              ...item,
+              items: updateFileContent(item.items),
+            };
+          }
+
+          if (
+            item.filename === fileToSave.filename &&
+            item.fileExtension === fileToSave.fileExtension
+          ) {
+            return {
+              ...item,
+              content: fileToSave.content,
+            };
+          }
+
+          return item;
+        });
+
+      updatedTemplateData.items = updateFileContent(
+        updatedTemplateData.items
+      );
+
+      // Sync changes with WebContainer
+      if (writeFileSync) {
+        await writeFileSync(filePath, fileToSave.content);
+        lastSyncedContent.current.set(fileToSave.id, fileToSave.content);
+      }
+
+      // Save changes to database
+      await saveTemplateData(updatedTemplateData);
+
+      setTemplateData(updatedTemplateData);
+
+      // Update open files
+      const updatedOpenFiles = openFiles.map((f) =>
+        f.id === targetFileId
+          ? {
+              ...f,
+              content: fileToSave.content,
+              originalContent: fileToSave.content,
+              hasUnsavedChanges: false,
+            }
+          : f
+      );
+
+      setOpenFiles(updatedOpenFiles);
+
+      toast.success(
+        `Saved ${fileToSave.filename}.${fileToSave.fileExtension}`
+      );
+    } catch (error) {
+      console.error("Error saving file:", error);
+
+      toast.error(
+        `Failed to save ${fileToSave.filename}.${fileToSave.fileExtension}`
+      );
+
+      throw error;
+    }
+  },
+  [
+    activeFileId,
+    openFiles,
+    writeFileSync,
+    saveTemplateData,
+    setTemplateData,
+    setOpenFiles,
+  ]
+);
 
     const handleSaveAll = async () => {
     const unsavedFiles = openFiles.filter((f) => f.hasUnsavedChanges);
