@@ -58,7 +58,7 @@ export default function Home() {
 
           <h1 className="text-5xl font-bold leading-[1.12] tracking-tight sm:text-6xl md:text-7xl">
             Your code editor just a tab away!
-            <span className="mt-2 block text-red-500">
+            <span className="mt-2 text-6xl block text-red-500">
               switch tabs, start building
             </span>
           </h1>
@@ -170,7 +170,7 @@ export default function Home() {
                     <span className="text-pink-400">import</span>
                     <span className="text-gray-300"> React </span>
                     <span className="text-pink-400">from</span>
-                    <span className="text-green-300"> "react"</span>
+                    <span className="text-green-300"> &quot;react&quot;</span>
                   </p>
 
                   <p>
@@ -188,7 +188,7 @@ export default function Home() {
                     <span className="text-gray-300">{"<"}main </span>
                     <span className="text-sky-300">className</span>
                     <span className="text-gray-300">=</span>
-                    <span className="text-green-300">"min-h-screen"</span>
+                    <span className="text-green-300">&quot;min-h-screen&quot;</span>
                     <span className="text-gray-300">{">"}</span>
                   </p>
 
