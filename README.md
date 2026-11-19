@@ -40,7 +40,7 @@ A browser-based IDE with an AI coding assistant and in-browser code execution. B
 1. Clone the repository and install dependencies:
 
    ```bash
-   git clone https://github.com/your-username/vide-code-editor.git
+   git clone https://github.com/kajalsanwalll/vide-code-editor.git
    cd vide-code-editor
    npm install
    ```
