@@ -1,4 +1,4 @@
-# VibeCode Editor
+# VideCode Editor
 
 A browser-based IDE with an AI coding assistant and in-browser code execution. Built with Next.js, Monaco Editor, WebContainers, and local LLMs through Ollama.
 
